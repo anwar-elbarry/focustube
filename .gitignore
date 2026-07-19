@@ -1,0 +1,10 @@
+# Dependencies (Tauri v2)
+/webview2  # Windows webview (system-provided)
+/node_modules
+/dist
+/src-tauri/target
+/src-tauri/gen
+*.log
+.DS_Store
+/skills
+AGENTS
