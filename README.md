@@ -1,56 +1,88 @@
 # FocusTube
 
-A lightweight desktop app for **working-while-watching YouTube**. Paste a link and get a
-clean, borderless, **always-on-top** video player — no comments, no recommendations, no
-browser chrome.
+A lightweight desktop app for **working-while-watching YouTube**. Paste a link and get a clean, borderless, **always-on-top** video player — no comments, no recommendations, no browser chrome.
 
-Stack: **Tauri v2** (Rust) + **React 18** + **TypeScript** + **Vite**. The player uses the
-YouTube IFrame API, which already hides comments and recommendations.
+![GitHub release](https://img.shields.io/github/v/release/anouarelbakry/focustube?style=flat&colorA=0c0b0a&colorB=ff6a3d)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat&colorA=0c0b0a&colorB=22c55e)
 
-## Features (MVP)
-- Paste any YouTube link (watch / youtu.be / shorts / embed) → clean player.
-- Borderless window, draggable via the title bar, always-on-top by default.
-- Pin / unpin toggle, close, and "New video" from the title bar.
-- Global hotkey: **Space** toggles play/pause (even when the app isn't focused).
+---
 
-## Prerequisites (Windows)
-1. **Node.js** (LTS) — https://nodejs.org
-2. **Rust** via rustup — https://rustup.rs
-3. **WebView2** is preinstalled on Windows 10/11.
-4. **Visual Studio Build Tools** with "Desktop development with C++" workload.
+## Features
 
-See https://v2.tauri.app/start/prerequisites/ for the full list.
+- **Always on top** — stays above every window so the video follows you across apps
+- **Borderless & clean** — no title bar, no sidebar, no comments. Just the player
+- **Adjustable opacity** — drag the transparency slider to peek through while typing
+- **Global play/pause** — <kbd>Space</kbd> or media key works even when the app isn't focused
+- **No account needed** — paste any YouTube URL and play. No sign-in, no tracking
+- **Tiny footprint** — under 10 MB, zero dependencies
 
-## Run it
-```powershell
-cd focustube
+## How it works
+
+1. **Download** the installer for your system
+2. **Paste a YouTube link** (watch, youtu.be, or shorts)
+3. **Float it** — the video plays in a clean, always-on-top window
+
+## Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Shell | [Tauri v2](https://v2.tauri.app) (Rust) |
+| Frontend | React 18 + TypeScript |
+| Bundler | Vite |
+| Video | YouTube IFrame API |
+
+## Quick start
+
+```bash
 npm install
-npm run tauri dev      # builds the Rust shell + launches the app
+npm run tauri dev      # development mode
+npm run tauri build    # production build
 ```
 
-## Build an installer
-```powershell
-npm run tauri build    # outputs to src-tauri/target/release/bundle
-```
+### Prerequisites
 
-## Replace the icon
-The shipped icons are placeholders. Generate proper ones from any square PNG:
-```powershell
-npm run tauri icon path/to/icon.png
-```
+- [Node.js](https://nodejs.org) LTS
+- [Rust](https://rustup.rs)
+- WebView2 (preinstalled on Windows 10/11)
+- Visual Studio Build Tools with "Desktop development with C++" workload
+
+See [Tauri v2 prerequisites](https://v2.tauri.app/start/prerequisites/) for details.
 
 ## Project layout
+
 ```
 focustube/
-  index.html
-  src/            React frontend (App, Player, youtube URL parser, styles)
-  src-tauri/      Rust shell (window config, global-shortcut plugin)
-    tauri.conf.json
-    icons/
+├── index.html          # App entry point
+├── src/                # React frontend
+│   ├── App.tsx         # Main app component
+│   ├── Player.tsx      # YouTube player wrapper
+│   ├── youtube.ts      # URL parser
+│   └── styles.css      # App styles
+├── src-tauri/          # Rust shell (Tauri)
+│   ├── tauri.conf.json
+│   ├── src/lib.rs      # Plugin registration
+│   └── icons/
+└── website/            # Marketing landing page
+    ├── index.html
+    ├── styles.css
+    └── script.js
 ```
 
-## Roadmap (post-MVP)
-- Transparency / click-through mode (watch while clicking through the video).
-- Multi-tile grid (2–3 videos at once).
-- Audio-only mode, speed presets, section loop.
-- Timestamp notes, playlists, resume-per-video persistence.
+## Website
+
+The marketing landing page lives in `website/` and is deployed via GitHub Pages. It features OS-aware download buttons that link to the latest GitHub Release.
+
+## Roadmap
+
+- Transparency / click-through mode
+- Multi-tile grid (2-3 videos at once)
+- Audio-only mode, speed presets
+- Timestamp notes, playlists
+
+## License
+
+MIT
+
+---
+
+Created with ❤️ by [Anouar El Barry](https://anouarelbarry.com)
