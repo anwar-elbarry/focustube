@@ -54,7 +54,6 @@ export default function App() {
       if (p.getPlayerState() === 1) p.pauseVideo();
       else p.playVideo();
     };
-    const nudge = (d: number) => nudgeOpacity(d);
     const fire = (fn: () => void) => (e: any) => {
       const st = typeof e === "string" ? "Pressed" : e?.state;
       if (st && st !== "Pressed") return;
@@ -90,10 +89,6 @@ export default function App() {
 
   function changeOpacity(v: number) {
     setOpacity(v);
-  }
-
-  function nudgeOpacity(delta: number) {
-    setOpacity((v) => Math.min(1, Math.max(0.2, Math.round((v + delta) * 100) / 100)));
   }
 
   return (
