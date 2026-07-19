@@ -1,5 +1,5 @@
 // ---- Single source of truth: your GitHub repo ----
-const REPO = "OWNER/focustube";
+const REPO = "anwar-elbarry/focustube";
 const RELEASES_URL = `https://github.com/${REPO}/releases/latest`;
 
 // Enable JS-only reveal styles
