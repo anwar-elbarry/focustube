@@ -62,7 +62,7 @@ focustube/
 │   ├── tauri.conf.json
 │   ├── src/lib.rs      # Plugin registration
 │   └── icons/
-└── website/            # Marketing landing page
+└── docs/               # Marketing landing page
     ├── index.html
     ├── styles.css
     └── script.js
@@ -70,7 +70,7 @@ focustube/
 
 ## Website
 
-The marketing landing page lives in `website/` and is deployed via GitHub Pages. It features OS-aware download buttons that link to the latest GitHub Release.
+The marketing landing page lives in `docs/` and is deployed via GitHub Pages. It features OS-aware download buttons that link to the latest GitHub Release.
 
 ## Roadmap
 
