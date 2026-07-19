@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="FocusTube — a clean, always-on-top YouTube player">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap');
+      .sora { font-family: 'Sora', system-ui, sans-serif; }
+      .inter { font-family: 'Inter', system-ui, sans-serif; }
+    </style>
+
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff6a3d" />
+      <stop offset="42%" stop-color="#ff3d8b" />
+      <stop offset="100%" stop-color="#7c5cff" />
+    </linearGradient>
+
+    <radialGradient id="b1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6a3d" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#ff6a3d" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="b2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7c5cff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#7c5cff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="b3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff3d8b" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#ff3d8b" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="video" cx="30%" cy="22%" r="90%">
+      <stop offset="0%" stop-color="#2a2030" />
+      <stop offset="70%" stop-color="#0c0d14" />
+    </radialGradient>
+
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="70" />
+    </filter>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="26" stdDeviation="34" flood-color="#000" flood-opacity="0.55" />
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="630" fill="#08080c" />
+
+  <!-- aurora -->
+  <g filter="url(#soft)">
+    <circle cx="160" cy="80" r="300" fill="url(#b1)" />
+    <circle cx="1080" cy="560" r="320" fill="url(#b2)" />
+    <circle cx="780" cy="240" r="220" fill="url(#b3)" />
+  </g>
+
+  <!-- brand -->
+  <g transform="translate(64,58)">
+    <rect width="32" height="32" rx="9" fill="url(#grad)" />
+    <path d="M13 9v14l11-7z" fill="#fff" />
+    <text x="44" y="24" class="sora" font-weight="800" font-size="24" fill="#f3f4f8">FocusTube</text>
+  </g>
+
+  <!-- headline -->
+  <g transform="translate(64,232)">
+    <text class="sora" font-weight="800" font-size="62" fill="#f3f4f8">Watch YouTube</text>
+    <text y="74" class="sora" font-weight="800" font-size="62" fill="url(#grad)">without the noise.</text>
+  </g>
+
+  <text x="64" y="372" class="inter" font-weight="500" font-size="20" fill="#9aa1b2">
+    A borderless, always-on-top player that floats while you work.
+  </text>
+
+  <!-- floating app mockup -->
+  <g transform="rotate(-4 905 330)" filter="url(#shadow)">
+    <rect x="700" y="150" width="360" height="232" rx="18" fill="#12131a" fill-opacity="0.92" stroke="#ffffff" stroke-opacity="0.14" />
+    <!-- title bar -->
+    <line x1="700" y1="188" x2="1060" y2="188" stroke="#ffffff" stroke-opacity="0.08" />
+    <rect x="716" y="164" width="14" height="14" rx="4" fill="url(#grad)" />
+    <text x="738" y="176" class="inter" font-weight="600" font-size="13" fill="#f3f4f8">FocusTube</text>
+    <rect x="980" y="169" width="22" height="4" rx="2" fill="#ffffff" fill-opacity="0.3" />
+    <circle cx="1012" cy="171" r="4" fill="#ffffff" fill-opacity="0.3" />
+    <rect x="1028" y="167" width="12" height="3" rx="1.5" fill="#ffffff" fill-opacity="0.3" />
+    <rect x="1046" y="166" width="10" height="10" rx="3" fill="#ff6a3d" />
+    <!-- video -->
+    <rect x="712" y="198" width="336" height="172" rx="11" fill="url(#video)" />
+    <rect x="712" y="198" width="336" height="172" rx="11" fill="url(#grad)" fill-opacity="0.12" />
+    <circle cx="880" cy="284" r="27" fill="#ffffff" fill-opacity="0.92" />
+    <path d="M872 270l16 14-16 14z" fill="#111" />
+    <text x="724" y="358" class="inter" font-size="11" fill="#ffffff" fill-opacity="0.7" font-family="ui-monospace, monospace">12:04 / 48:20</text>
+    <g transform="translate(980,348)">
+      <rect width="84" height="22" rx="11" fill="#ff6a3d" fill-opacity="0.18" stroke="#ff6a3d" stroke-opacity="0.4" />
+      <text x="42" y="15" text-anchor="middle" class="inter" font-size="11" fill="#f3f4f8">always on top</text>
+    </g>
+  </g>
+</svg>
