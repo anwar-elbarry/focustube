@@ -18,15 +18,15 @@ jobs:
           - platform: windows-latest
             args: ""
             asset: "src-tauri/target/release/bundle/nsis/FocusTube_*_x64-setup.exe"
-            upload: "FocusTube_Windows_x64-setup.exe"
+            upload: "FocusTube-Windows-x64-setup.exe"
           - platform: macos-latest
             args: ""
             asset: "src-tauri/target/release/bundle/macos/FocusTube.app.tar.gz"
-            upload: "FocusTube_macOS.app.tar.gz"
+            upload: "FocusTube-macOS.tar.gz"
           - platform: ubuntu-22.04
             args: ""
             asset: "src-tauri/target/release/bundle/appimage/FocusTube_*_amd64.AppImage"
-            upload: "FocusTube_Linux_x64.AppImage"
+            upload: "FocusTube-Linux-x64.AppImage"
 
     runs-on: ${{ matrix.platform }}
 
@@ -60,8 +60,13 @@ jobs:
       - name: Build
         run: npm run tauri build -- ${{ matrix.args }}
 
+      - name: Rename asset
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: mkdir -p dist && cp ${{ matrix.asset }} dist/${{ matrix.upload }}
+
       - name: Publish release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ matrix.asset }}
+          files: dist/${{ matrix.upload }}
