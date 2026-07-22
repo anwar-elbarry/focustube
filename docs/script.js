@@ -130,8 +130,8 @@ function wireDownloads() {
     })
     .then((release) => {
       const assetMap = {
-        windows: (a) => a.name.includes("Windows") && a.name.endsWith(".exe"),
-        macos: (a) => a.name.includes("macOS") || a.name.endsWith(".tar.gz"),
+        windows: (a) => a.name.endsWith(".exe"),
+        macos: (a) => a.name.endsWith(".tar.gz"),
         linux: (a) => a.name.endsWith(".AppImage"),
       };
 
