@@ -6,14 +6,14 @@ const RELEASES_URL = `https://github.com/${REPO}/releases/latest`;
 document.documentElement.classList.add("js");
 
 // Keep GitHub links in sync with REPO
-document.querySelectorAll('a[href*="OWNER/focustube"]').forEach((a) => {
-  a.href = a.href.replace("OWNER/focustube", REPO);
+document.querySelectorAll('a[href*="anwar-elbarry/focustube"]').forEach((a) => {
+  a.href = a.href.replace("anwar-elbarry/focustube", REPO);
 });
 
 // Badge image URLs too
-document.querySelectorAll('img[src*="OWNER/focustube"]').forEach((img) => {
-  img.src = img.src.replace("OWNER/focustube", REPO);
-  img.alt = img.alt.replace("OWNER/focustube", "focustube");
+document.querySelectorAll('img[src*="anwar-elbarry/focustube"]').forEach((img) => {
+  img.src = img.src.replace("anwar-elbarry/focustube", REPO);
+  img.alt = img.alt.replace("anwar-elbarry/focustube", "focustube");
 });
 
 // ---- Theme toggle ----
@@ -115,47 +115,13 @@ function styleButtons(os) {
   });
 }
 
-const RELEASES_URL = `https://github.com/${REPO}/releases/latest`;
-const REPO_URL = `https://github.com/${REPO}`;
-
 function wireDownloads() {
   const os = detectOS();
   styleButtons(os);
+
   const note = document.getElementById("download-note");
-
-  fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
-    .then((r) => {
-      if (!r.ok) throw new Error("No release found");
-      return r.json();
-    })
-    .then((release) => {
-      const assetMap = {
-        windows: (a) => a.name.endsWith(".exe"),
-        macos: (a) => a.name.endsWith(".tar.gz"),
-        linux: (a) => a.name.endsWith(".AppImage"),
-      };
-
-      document.querySelectorAll(".btn[data-os]").forEach((btn) => {
-        const match = release.assets.find(assetMap[btn.dataset.os]);
-        if (match) btn.href = match.browser_download_url;
-      });
-
-      const allLinks = [
-        document.getElementById("all-releases"),
-        document.getElementById("all-releases-foot"),
-      ];
-      allLinks.forEach((l) => l && (l.href = release.html_url));
-
-      if (note)
-        note.innerHTML = `Download auto-detected for your system — <a href="${release.html_url}">see all downloads</a>`;
-    })
-    .catch(() => {
-      document
-        .querySelectorAll(".btn[data-os]")
-        .forEach((b) => (b.href = REPO_URL));
-      if (note)
-        note.innerHTML = `<a href="${RELEASES_URL}">Visit the releases page</a> to download`;
-    });
+  if (note)
+    note.innerHTML = `Download auto-detected for your system — <a href="https://github.com/${REPO}/releases/latest">see all downloads</a>`;
 }
 
 wireDownloads();
