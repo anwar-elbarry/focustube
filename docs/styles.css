@@ -203,6 +203,15 @@ kbd {
 .btn-solid:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--acid-dim); }
 .btn-line { border: 1px solid var(--line); color: var(--paper); }
 .btn-line:hover { border-color: var(--paper); transform: translateY(-2px); }
+.btn-downloading {
+  opacity: 0.7;
+  pointer-events: none;
+  animation: pulse-dl 1s ease-in-out infinite;
+}
+@keyframes pulse-dl {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.45; }
+}
 
 /* ticker */
 .ticker {
