@@ -98,13 +98,7 @@ const io = new IntersectionObserver(
 );
 document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-// ---- Smart download buttons ----
-const ASSET_MATCH = {
-  windows: /setup\.exe$/i,
-  macos: /\.app\.tar\.gz$/i,
-  linux: /\.AppImage$/i,
-};
-
+// ---- Download buttons ----
 function detectOS() {
   const ua = navigator.userAgent;
   if (/Win/i.test(ua)) return "windows";
@@ -121,50 +115,21 @@ function styleButtons(os) {
   });
 }
 
-function setHref(os, url) {
-  document
-    .querySelectorAll(`.btn[data-os="${os}"]`)
-    .forEach((b) => (b.href = url));
-}
+const RELEASES_URL = `https://github.com/${REPO}/releases/latest`;
+const REPO_URL = `https://github.com/${REPO}`;
 
-function fallback() {
-  document.querySelectorAll(".btn[data-os]").forEach((b) => (b.href = RELEASES_URL));
-  const note = document.getElementById("download-note");
-  if (note) {
-    note.innerHTML = `Pick your system above · <a href="${RELEASES_URL}">all downloads</a>`;
-  }
-}
-
-async function wireDownloads() {
+function wireDownloads() {
   const os = detectOS();
   styleButtons(os);
+
+  document.querySelectorAll(".btn[data-os]").forEach((b) => (b.href = REPO_URL));
+
   const allLinks = [document.getElementById("all-releases"), document.getElementById("all-releases-foot")];
   allLinks.forEach((l) => l && (l.href = RELEASES_URL));
 
-  try {
-    const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
-    if (!res.ok) throw new Error("no release");
-    const data = await res.json();
-    const assets = data.assets || [];
-
-    for (const key of Object.keys(ASSET_MATCH)) {
-      const asset = assets.find((a) => ASSET_MATCH[key].test(a.name));
-      if (asset) setHref(key, asset.browser_download_url);
-    }
-
-    if (assets.find((a) => ASSET_MATCH[os].test(a.name))) {
-      styleButtons(os);
-      const note = document.getElementById("download-note");
-      if (note) {
-        note.innerHTML = `Download ready for your system · <a href="${RELEASES_URL}">all downloads</a>`;
-      }
-    } else {
-      fallback();
-    }
-  } catch (e) {
-    fallback();
+  const note = document.getElementById("download-note");
+  if (note) {
+    note.innerHTML = `No releases yet — <a href="${REPO_URL}">visit the repo</a> to get notified when the first build is out`;
   }
 }
 
