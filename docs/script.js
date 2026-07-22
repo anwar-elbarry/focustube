@@ -121,16 +121,41 @@ const REPO_URL = `https://github.com/${REPO}`;
 function wireDownloads() {
   const os = detectOS();
   styleButtons(os);
-
-  document.querySelectorAll(".btn[data-os]").forEach((b) => (b.href = REPO_URL));
-
-  const allLinks = [document.getElementById("all-releases"), document.getElementById("all-releases-foot")];
-  allLinks.forEach((l) => l && (l.href = RELEASES_URL));
-
   const note = document.getElementById("download-note");
-  if (note) {
-    note.innerHTML = `No releases yet — <a href="${REPO_URL}">visit the repo</a> to get notified when the first build is out`;
-  }
+
+  fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+    .then((r) => {
+      if (!r.ok) throw new Error("No release found");
+      return r.json();
+    })
+    .then((release) => {
+      const assetMap = {
+        windows: (a) => a.name.includes("Windows") && a.name.endsWith(".exe"),
+        macos: (a) => a.name.includes("macOS") || a.name.endsWith(".tar.gz"),
+        linux: (a) => a.name.endsWith(".AppImage"),
+      };
+
+      document.querySelectorAll(".btn[data-os]").forEach((btn) => {
+        const match = release.assets.find(assetMap[btn.dataset.os]);
+        if (match) btn.href = match.browser_download_url;
+      });
+
+      const allLinks = [
+        document.getElementById("all-releases"),
+        document.getElementById("all-releases-foot"),
+      ];
+      allLinks.forEach((l) => l && (l.href = release.html_url));
+
+      if (note)
+        note.innerHTML = `Download auto-detected for your system — <a href="${release.html_url}">see all downloads</a>`;
+    })
+    .catch(() => {
+      document
+        .querySelectorAll(".btn[data-os]")
+        .forEach((b) => (b.href = REPO_URL));
+      if (note)
+        note.innerHTML = `<a href="${RELEASES_URL}">Visit the releases page</a> to download`;
+    });
 }
 
 wireDownloads();
