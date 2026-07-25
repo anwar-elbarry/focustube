@@ -1,88 +1,161 @@
+<div align="center">
+
+<img src="src-tauri/icons/icon.png" alt="FocusTube Logo" width="96" height="96" />
+
 # FocusTube
 
-A lightweight desktop app for **working-while-watching YouTube**. Paste a link and get a clean, borderless, **always-on-top** video player — no comments, no recommendations, no browser chrome.
+**YouTube — without the noise.**
 
-![GitHub release](https://img.shields.io/github/v/release/anouarelbakry/focustube?style=flat&colorA=0c0b0a&colorB=ff6a3d)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat&colorA=0c0b0a&colorB=22c55e)
+A borderless, always-on-top desktop video player built for people who work and watch at the same time.
+
+<br/>
+
+[![GitHub release](https://img.shields.io/github/v/release/anwar-elbarry/focustube?style=for-the-badge&colorA=0c0b0a&colorB=ff6a3d&label=Latest)](https://github.com/anwar-elbarry/focustube/releases/latest)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge&colorA=0c0b0a)](LICENSE)
+[![Built with Tauri](https://img.shields.io/badge/Built%20with-Tauri%20v2-24C8DB?style=for-the-badge&colorA=0c0b0a&logo=tauri)](https://v2.tauri.app)
+[![Made with Rust](https://img.shields.io/badge/Powered%20by-Rust-CE422B?style=for-the-badge&colorA=0c0b0a&logo=rust)](https://www.rust-lang.org)
+
+<br/>
+
+![FocusTube App Screenshot](docs/screenshot.png)
+
+</div>
 
 ---
 
-## Features
+## ✨ Why FocusTube?
 
-- **Always on top** — stays above every window so the video follows you across apps
-- **Borderless & clean** — no title bar, no sidebar, no comments. Just the player
-- **Adjustable opacity** — drag the transparency slider to peek through while typing
-- **Global play/pause** — <kbd>Space</kbd> or media key works even when the app isn't focused
-- **No account needed** — paste any YouTube URL and play. No sign-in, no tracking
-- **Tiny footprint** — under 10 MB, zero dependencies
+> You open YouTube to watch one tutorial. Fifteen minutes later you're deep in the recommendations rabbit hole, reading comments, and have completely forgotten what you were doing.
 
-## How it works
+**FocusTube fixes that.**
 
-1. **Download** the installer for your system
-2. **Paste a YouTube link** (watch, youtu.be, or shorts)
-3. **Float it** — the video plays in a clean, always-on-top window
+Paste a link → get a clean, floating video player with zero distractions. It floats above your work. You stay in the zone.
 
-## Stack
+---
 
-| Layer | Technology |
-|-------|-----------|
-| Shell | [Tauri v2](https://v2.tauri.app) (Rust) |
-| Frontend | React 18 + TypeScript |
-| Bundler | Vite |
-| Video | YouTube IFrame API |
+## 🚀 Features
 
-## Quick start
+| | Feature | Details |
+|---|---|---|
+| 📌 | **Always on Top** | Floats above every window — VSCode, Figma, terminal, anything |
+| 🧼 | **Zero Clutter** | No sidebar, no comments, no ads, no recommended videos |
+| 🌫️ | **Adjustable Opacity** | Drag the slider — the player becomes semi-transparent so you can see your work through it |
+| ⌨️ | **Global Play/Pause** | Hit `Space` or your media key even when FocusTube isn't focused |
+| 🔗 | **Any YouTube URL** | Works with `youtube.com/watch`, `youtu.be`, and Shorts links |
+| 🔒 | **No Account Needed** | Paste and play. No sign-in, no tracking, no cookies |
+| 🪶 | **Tiny Footprint** | Under 10 MB installer. Launches in under a second |
 
-```bash
-npm install
-npm run tauri dev      # development mode
-npm run tauri build    # production build
+---
+
+## ⚡ Get Started in 3 Steps
+
 ```
+1.  Download  →  Grab the installer for your OS from the Releases page
+2.  Paste     →  Drop any YouTube link into FocusTube
+3.  Float     →  Your video plays in a clean window above everything else
+```
+
+[![Download for Windows](https://img.shields.io/badge/⬇%20Download-Windows-0078D4?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)
+[![Download for macOS](https://img.shields.io/badge/⬇%20Download-macOS-lightgrey?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)
+[![Download for Linux](https://img.shields.io/badge/⬇%20Download-Linux-E95420?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)
+
+---
+
+## 🛠️ Tech Stack
+
+```
+┌─────────────────────────────────────────────────────┐
+│                     FocusTube                       │
+├──────────────┬──────────────────────────────────────┤
+│  Shell       │  Tauri v2  (Rust)                    │
+│  Frontend    │  React 18 + TypeScript                │
+│  Bundler     │  Vite                                 │
+│  Video       │  YouTube IFrame API                   │
+│  Styling     │  Vanilla CSS                          │
+└──────────────┴──────────────────────────────────────┘
+```
+
+---
+
+## 🧑‍💻 Build from Source
 
 ### Prerequisites
 
+Make sure you have the following installed:
+
 - [Node.js](https://nodejs.org) LTS
-- [Rust](https://rustup.rs)
-- WebView2 (preinstalled on Windows 10/11)
-- Visual Studio Build Tools with "Desktop development with C++" workload
+- [Rust](https://rustup.rs) (stable toolchain)
+- WebView2 — preinstalled on Windows 10 / 11
+- Visual Studio Build Tools with **"Desktop development with C++"** workload
 
-See [Tauri v2 prerequisites](https://v2.tauri.app/start/prerequisites/) for details.
+> Full setup guide: [Tauri v2 Prerequisites](https://v2.tauri.app/start/prerequisites/)
 
-## Project layout
+### Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Start development mode (hot reload)
+npm run tauri dev
+
+# Build production installer
+npm run tauri build
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 focustube/
-├── index.html          # App entry point
-├── src/                # React frontend
-│   ├── App.tsx         # Main app component
-│   ├── Player.tsx      # YouTube player wrapper
-│   ├── youtube.ts      # URL parser
-│   └── styles.css      # App styles
-├── src-tauri/          # Rust shell (Tauri)
-│   ├── tauri.conf.json
-│   ├── src/lib.rs      # Plugin registration
-│   └── icons/
-└── docs/               # Marketing landing page
+├── index.html              # App entry point
+├── src/                    # React frontend
+│   ├── App.tsx             # Main app shell + controls
+│   ├── Player.tsx          # YouTube IFrame player wrapper
+│   ├── youtube.ts          # URL parser (watch / youtu.be / shorts)
+│   └── styles.css          # All app styles
+├── src-tauri/              # Rust + Tauri backend
+│   ├── tauri.conf.json     # Window config, permissions
+│   ├── src/lib.rs          # Plugin registration
+│   └── icons/              # App icons (all sizes)
+└── docs/                   # Marketing landing page (GitHub Pages)
     ├── index.html
     ├── styles.css
     └── script.js
 ```
 
-## Website
+---
 
-The marketing landing page lives in `docs/` and is deployed via GitHub Pages. It features OS-aware download buttons that link to the latest GitHub Release.
+## 🗺️ Roadmap
 
-## Roadmap
-
-- Transparency / click-through mode
-- Multi-tile grid (2-3 videos at once)
-- Audio-only mode, speed presets
-- Timestamp notes, playlists
-
-## License
-
-MIT
+- [ ] Click-through / full transparency mode
+- [ ] Multi-tile grid — watch 2–3 videos side by side
+- [ ] Audio-only mode + playback speed presets
+- [ ] Timestamp notes & personal playlists
+- [ ] Picture-in-picture snap zones
 
 ---
 
-Created with ❤️ by [Anouar El Barry](https://anouarelbarry.com)
+## 🌐 Website
+
+The marketing site lives in `docs/` and is deployed on **GitHub Pages**.
+It features OS-aware download buttons that always link to the latest release.
+
+👉 **[focustube-puce.vercel.app](https://focustube-puce.vercel.app)**
+
+---
+
+## 📄 License
+
+MIT — free to use, modify, and distribute.
+
+---
+
+<div align="center">
+
+Made with ❤️ by **[Anouar El Barry](https://anouarelbarry.com)**
+
+*If FocusTube helped you stay focused, consider giving it a ⭐ on GitHub!*
+
+</div>
