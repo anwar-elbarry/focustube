@@ -1,0 +1,35 @@
+<svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&amp;family=JetBrains+Mono:wght@600&amp;display=swap');
+      .title-focus { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; fill: #F4F3F8; font-size: 78px; letter-spacing: -2px; }
+      .title-tube { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 800; fill: #FF6A3D; font-size: 78px; letter-spacing: -2px; }
+      .subtitle { font-family: 'JetBrains Mono', monospace; font-weight: 600; fill: #9A948A; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; }
+    </style>
+  </defs>
+
+  <rect width="720" height="220" rx="24" fill="#0C0B0A"/>
+
+  <!-- Icon Mark Scaled and Positioned -->
+  <g transform="translate(30, 20) scale(0.3515625)">
+    <rect x="24" y="24" width="464" height="464" rx="104" fill="#141318" />
+    <rect x="24.5" y="24.5" width="463" height="463" rx="103.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="3" />
+    <g stroke="#FFFFFF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M 110 160 L 110 110 L 160 110" />
+      <path d="M 352 110 L 402 110 L 402 160" />
+      <path d="M 110 352 L 110 402 L 160 402" />
+      <path d="M 402 352 L 402 402 L 352 402" />
+    </g>
+    <circle cx="110" cy="110" r="7" fill="#FF6A3D" />
+    <circle cx="402" cy="110" r="7" fill="#FF6A3D" />
+    <circle cx="110" cy="402" r="7" fill="#FF6A3D" />
+    <circle cx="402" cy="402" r="7" fill="#FF6A3D" />
+    <path d="M 214 180 C 214 171.5 223.3 166.3 230.5 170.7 L 338.5 246.7 C 345.5 251 345.5 261 338.5 265.3 L 230.5 341.3 C 223.3 345.7 214 340.5 214 332 Z" fill="#FF6A3D" />
+  </g>
+
+  <!-- Typography -->
+  <text x="235" y="124">
+    <tspan class="title-focus">Focus</tspan><tspan class="title-tube">Tube</tspan>
+  </text>
+  <text x="238" y="162" class="subtitle">BORDERLESS YOUTUBE PLAYER</text>
+</svg>

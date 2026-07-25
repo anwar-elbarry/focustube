@@ -50,8 +50,19 @@
 
   <!-- brand -->
   <g transform="translate(64,58)">
-    <rect width="32" height="32" rx="9" fill="url(#grad)" />
-    <path d="M13 9v14l11-7z" fill="#fff" />
+    <rect width="32" height="32" rx="9" fill="#141318" />
+    <rect x="0.5" y="0.5" width="31" height="31" rx="8.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1" />
+    <g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M 5 12 L 5 7 L 10 7" />
+      <path d="M 22 7 L 27 7 L 27 12" />
+      <path d="M 5 20 L 5 25 L 10 25" />
+      <path d="M 27 20 L 27 25 L 22 25" />
+    </g>
+    <circle cx="5" cy="7" r="1" fill="#FF6A3D" />
+    <circle cx="27" cy="7" r="1" fill="#FF6A3D" />
+    <circle cx="5" cy="25" r="1" fill="#FF6A3D" />
+    <circle cx="27" cy="25" r="1" fill="#FF6A3D" />
+    <path d="M 12 11 C 12 9.7 13.2 9 14.2 9.6 L 21.2 14.4 C 22.2 15 22.2 16 21.2 16.6 L 14.2 21.4 C 13.2 22 12 21.3 12 20 Z" fill="#FF6A3D" />
     <text x="44" y="24" class="sora" font-weight="800" font-size="24" fill="#f3f4f8">FocusTube</text>
   </g>
 
@@ -70,7 +81,19 @@
     <rect x="700" y="150" width="360" height="232" rx="18" fill="#12131a" fill-opacity="0.92" stroke="#ffffff" stroke-opacity="0.14" />
     <!-- title bar -->
     <line x1="700" y1="188" x2="1060" y2="188" stroke="#ffffff" stroke-opacity="0.08" />
-    <rect x="716" y="164" width="14" height="14" rx="4" fill="url(#grad)" />
+    <rect x="716" y="164" width="14" height="14" rx="4" fill="#141318" />
+    <rect x="716.5" y="164.5" width="13" height="13" rx="3.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1" />
+    <g stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M 719 168 L 719 166 L 721 166" />
+      <path d="M 725 166 L 727 166 L 727 168" />
+      <path d="M 719 174 L 719 176 L 721 176" />
+      <path d="M 727 174 L 727 176 L 725 176" />
+    </g>
+    <circle cx="719" cy="166" r="0.8" fill="#FF6A3D" />
+    <circle cx="727" cy="166" r="0.8" fill="#FF6A3D" />
+    <circle cx="719" cy="176" r="0.8" fill="#FF6A3D" />
+    <circle cx="727" cy="176" r="0.8" fill="#FF6A3D" />
+    <path d="M 722 169.5 C 722 169 722.6 168.7 723.1 168.9 L 727 171.5 C 727.4 171.7 727.4 172.3 727 172.5 L 723.1 175.1 C 722.6 175.3 722 175 722 174.5 Z" fill="#FF6A3D" />
     <text x="738" y="176" class="inter" font-weight="600" font-size="13" fill="#f3f4f8">FocusTube</text>
     <rect x="980" y="169" width="22" height="4" rx="2" fill="#ffffff" fill-opacity="0.3" />
     <circle cx="1012" cy="171" r="4" fill="#ffffff" fill-opacity="0.3" />

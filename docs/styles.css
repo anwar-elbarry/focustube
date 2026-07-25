@@ -79,12 +79,14 @@ kbd {
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.04em; }
 .brand-mark {
-  display: grid;
-  place-items: center;
-  background: var(--acid);
-  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 26px;
   height: 26px;
+}
+.brand-mark svg {
+  border-radius: 6px;
 }
 .brand-name { font-size: 12px; letter-spacing: 0.22em; color: var(--muted); }
 .topnav { display: flex; gap: 22px; margin-left: auto; font-size: 13px; letter-spacing: 0.04em; }
@@ -284,7 +286,8 @@ kbd {
   color: var(--muted);
 }
 .win-brand { display: flex; align-items: center; gap: 7px; font-weight: 600; color: #fff; }
-.win-logo { width: 13px; height: 13px; border-radius: 4px; background: var(--acid); }
+.win-logo { display: flex; align-items: center; justify-content: center; width: 14px; height: 14px; }
+.win-logo svg { border-radius: 3px; }
 .win-actions { display: flex; gap: 7px; align-items: center; }
 .win-actions i { display: block; background: rgba(255, 255, 255, 0.35); border-radius: 3px; }
 .ic-slider { width: 22px; height: 4px; }
