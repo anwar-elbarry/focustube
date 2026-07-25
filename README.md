@@ -139,22 +139,13 @@ focustube/
 
 ## 🌐 Website
 
-The marketing site lives in `docs/` and is deployed on **GitHub Pages**.
-It features OS-aware download buttons that always link to the latest release.
-
 👉 **[focustube-puce.vercel.app](https://focustube-puce.vercel.app)**
-
----
-
-## 📄 License
-
-MIT — free to use, modify, and distribute.
 
 ---
 
 <div align="center">
 
-Made with ❤️ by **[Anouar El Barry](https://anouarelbarry.com)**
+Made with ❤️ by **[Anouar El Barry](https://elbarry.me)**
 
 *If FocusTube helped you stay focused, consider giving it a ⭐ on GitHub!*
 
