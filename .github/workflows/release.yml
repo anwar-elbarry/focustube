@@ -16,23 +16,23 @@ jobs:
       matrix:
         include:
           - platform: windows-latest
-            args: ""
-            asset: "src-tauri/target/release/bundle/nsis/FocusTube_*_x64-setup.exe"
-            upload: "FocusTube-Windows-x64-setup.exe"
+            asset_glob: "src-tauri/target/release/bundle/nsis/FocusTube_*_x64-setup.exe"
+            upload_name: "FocusTube-Windows-x64-setup.exe"
+
           - platform: macos-latest
-            args: ""
-            asset: "src-tauri/target/release/bundle/macos/FocusTube.app.tar.gz"
-            upload: "FocusTube-macOS.tar.gz"
+            asset_glob: "src-tauri/target/release/bundle/dmg/FocusTube_*.dmg"
+            upload_name: "FocusTube-macOS.dmg"
+
           - platform: ubuntu-22.04
-            args: ""
-            asset: "src-tauri/target/release/bundle/appimage/FocusTube_*_amd64.AppImage"
-            upload: "FocusTube-Linux-x64.AppImage"
+            asset_glob: "src-tauri/target/release/bundle/appimage/FocusTube_*_amd64.AppImage"
+            upload_name: "FocusTube-Linux-x64.AppImage"
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v4
 
+      # ── Linux system deps ───────────────────────────────────────────────
       - name: Install Linux build dependencies
         if: matrix.platform == 'ubuntu-22.04'
         run: |
@@ -44,29 +44,57 @@ jobs:
             librsvg2-dev \
             patchelf
 
+      # ── Windows: NSIS installer tool ────────────────────────────────────
       - name: Install NSIS (Windows installer)
         if: matrix.platform == 'windows-latest'
         run: choco install nsis -y
 
+      # ── macOS: skip code-signing for unsigned open-source builds ────────
+      - name: Disable macOS code signing
+        if: matrix.platform == 'macos-latest'
+        run: |
+          echo "APPLE_SIGNING_IDENTITY=-" >> $GITHUB_ENV
+          echo "TAURI_SIGNING_PRIVATE_KEY=" >> $GITHUB_ENV
+
+      # ── Toolchains ──────────────────────────────────────────────────────
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ matrix.platform }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.platform }}-cargo-
+
+      # ── Build ────────────────────────────────────────────────────────────
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Build
-        run: npm run tauri build -- ${{ matrix.args }}
+      - name: Build Tauri app
+        run: npm run tauri build
 
-      - name: Rename asset
+      # ── Upload to GitHub Release ─────────────────────────────────────────
+      - name: Collect built asset
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
-        run: mkdir -p dist && cp ${{ matrix.asset }} dist/${{ matrix.upload }}
+        run: |
+          mkdir -p dist
+          cp ${{ matrix.asset_glob }} dist/${{ matrix.upload_name }}
 
-      - name: Publish release asset
+      - name: Publish to GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/${{ matrix.upload }}
+          files: dist/${{ matrix.upload_name }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
