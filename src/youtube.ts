@@ -15,3 +15,11 @@ export function parseVideoId(input: string): string | null {
 
   return null;
 }
+
+export function parsePlaylistId(input: string): string | null {
+  const m = input.trim().match(/[?&]list=([A-Za-z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+export const thumbUrl = (videoId: string) =>
+  `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;

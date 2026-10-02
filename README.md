@@ -40,10 +40,18 @@ Paste a link → get a clean, floating video player with zero distractions. It f
 | 📌 | **Always on Top** | Floats above every window — VSCode, Figma, terminal, anything |
 | 🧼 | **Zero Clutter** | No sidebar, no comments, no ads, no recommended videos |
 | 🌫️ | **Adjustable Opacity** | Drag the slider — the player becomes semi-transparent so you can see your work through it |
-| ⌨️ | **Global Play/Pause** | Hit `Space` or your media key even when FocusTube isn't focused |
-| 🔗 | **Any YouTube URL** | Works with `youtube.com/watch`, `youtu.be`, and Shorts links |
+| 🖱️ | **Click-through Mode** | Clicks pass straight through the player to the window behind it. `Ctrl+Alt+C` toggles it |
+| 🪟 | **Mini Player** | One shortcut (`Ctrl+M`) shrinks it into a small corner player with controls on hover |
+| 📃 | **Playlists** | Paste a playlist link, browse every video, jump to any of them or skip ahead (`Shift+N` / `Shift+P`) |
+| ⏯️ | **Pick Up Where You Left Off** | Remembers your position in every video and playlist, with a recent list on the start screen |
+| ⬇️ | **Downloads** | Save videos (up to 4K, MP4) or audio (MP3) — single videos or chosen videos from a playlist, with sizes shown before you start. Powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp) |
+| 📁 | **Offline Playback** | Open downloaded or local video and audio files right in the player (`Ctrl+O`) |
+| ⏩ | **Playback Speed** | 0.75× to 2× from the menu, or `Shift+<` / `Shift+>` |
+| 🍅 | **Focus Timer** | Built-in 25/5 or 50/10 Pomodoro timer that pauses the video when it's break time |
+| ⌨️ | **Play/Pause Anywhere** | `Space` while FocusTube is focused, or your keyboard's media key from any app |
+| 🔗 | **Any YouTube URL** | Works with `youtube.com/watch`, `youtu.be`, Shorts and playlist links |
 | 🔒 | **No Account Needed** | Paste and play. No sign-in, no tracking, no cookies |
-| 🪶 | **Tiny Footprint** | Under 10 MB installer. Launches in under a second |
+| 🔔 | **Update Notices** | Tells you when a new version is out |
 
 ---
 
@@ -54,6 +62,22 @@ Paste a link → get a clean, floating video player with zero distractions. It f
 2.  Paste     →  Drop any YouTube link into FocusTube
 3.  Float     →  Your video plays in a clean window above everything else
 ```
+
+> **Downloads** need a one-time setup inside the app, which fetches yt-dlp and (on Windows) FFmpeg, about 190 MB. On macOS and Linux, install FFmpeg yourself (`brew install ffmpeg` / your package manager) to download video or MP3. Please only download content you have the right to.
+
+### ⌨️ Shortcuts
+
+| Keys | Action |
+|---|---|
+| `Space` | Play / pause (while FocusTube is focused) |
+| Media Play/Pause key | Play / pause from any app |
+| `Shift+N` / `Shift+P` | Next / previous video in a playlist |
+| `Shift+>` / `Shift+<` | Faster / slower |
+| `Ctrl+M` | Mini player on / off |
+| `Ctrl+Alt+C` | Click-through on / off |
+| `Ctrl+O` | Open a local file |
+
+On macOS use `⌘` instead of `Ctrl`.
 
 [![Download for Windows](https://img.shields.io/badge/⬇%20Download-Windows-0078D4?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)
 [![Download for macOS](https://img.shields.io/badge/⬇%20Download-macOS-lightgrey?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)
@@ -71,6 +95,7 @@ Paste a link → get a clean, floating video player with zero distractions. It f
 │  Frontend    │  React 18 + TypeScript                │
 │  Bundler     │  Vite                                 │
 │  Video       │  YouTube IFrame API                   │
+│  Downloads   │  yt-dlp + FFmpeg (fetched on demand)  │
 │  Styling     │  Vanilla CSS                          │
 └──────────────┴──────────────────────────────────────┘
 ```
@@ -111,13 +136,22 @@ npm run tauri build
 focustube/
 ├── index.html              # App entry point
 ├── src/                    # React frontend
-│   ├── App.tsx             # Main app shell + controls
-│   ├── Player.tsx          # YouTube IFrame player wrapper
-│   ├── youtube.ts          # URL parser (watch / youtu.be / shorts)
+│   ├── App.tsx             # Main app shell, title bar, shortcuts, mini / click-through modes
+│   ├── Player.tsx          # YouTube IFrame player wrapper (playlists, resume)
+│   ├── LocalPlayer.tsx     # Offline playback of local files
+│   ├── DownloadPanel.tsx   # Download UI (setup, sizes, playlist picker, progress)
+│   ├── PlaylistPanel.tsx   # Playlist browser for the player
+│   ├── MoreMenu.tsx        # Speed, mini player, click-through, timer, updates
+│   ├── downloads.ts        # Download state + backend calls
+│   ├── history.ts          # Resume positions + recent list
+│   ├── focusTimer.ts       # Pomodoro timer
+│   ├── updates.ts          # New-version check (GitHub releases)
+│   ├── youtube.ts          # URL parser (watch / youtu.be / shorts / playlists)
 │   └── styles.css          # All app styles
 ├── src-tauri/              # Rust + Tauri backend
 │   ├── tauri.conf.json     # Window config, permissions
-│   ├── src/lib.rs          # Plugin registration
+│   ├── src/lib.rs          # Plugin + command registration
+│   ├── src/downloader.rs   # yt-dlp / FFmpeg setup, metadata, sizes, downloads
 │   └── icons/              # App icons (all sizes)
 └── docs/                   # Marketing landing page (GitHub Pages)
     ├── index.html
@@ -129,11 +163,15 @@ focustube/
 
 ## 🗺️ Roadmap
 
-- [ ] Click-through / full transparency mode
+- [x] Click-through mode
+- [x] Playback speed presets
+- [x] Mini player
+- [x] Downloads (video, audio, playlists) + offline playback
+- [x] Resume where you left off
 - [ ] Multi-tile grid — watch 2–3 videos side by side
-- [ ] Audio-only mode + playback speed presets
 - [ ] Timestamp notes & personal playlists
 - [ ] Picture-in-picture snap zones
+- [ ] One-click self-installing updates
 
 ---
 
