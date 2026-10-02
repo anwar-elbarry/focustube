@@ -89,7 +89,7 @@ fn js_runtime_arg(app: &AppHandle) -> Option<String> {
     })
 }
 
-fn ytdlp_cmd(app: &AppHandle) -> Result<Command, String> {
+pub(crate) fn ytdlp_cmd(app: &AppHandle) -> Result<Command, String> {
     let mut cmd = Command::new(ytdlp_path(app)?);
     cmd.env("PYTHONIOENCODING", "utf-8")
         .env("PYTHONUTF8", "1")
@@ -107,7 +107,7 @@ fn ytdlp_cmd(app: &AppHandle) -> Result<Command, String> {
 }
 
 /// Turn yt-dlp's stderr into one short, human-readable message.
-fn clean_error(stderr: &str) -> String {
+pub(crate) fn clean_error(stderr: &str) -> String {
     stderr
         .lines()
         .rev()
@@ -464,6 +464,10 @@ pub struct DownloadArgs {
     items: Option<String>,
     /// Number of videos that will be downloaded, for "3 of N" progress.
     count: Option<u32>,
+    /// "off" | "file" (a `.srt` next to the video) | "embed" (inside the MP4).
+    subs: Option<String>,
+    /// Subtitle language code, e.g. "en".
+    sub_lang: Option<String>,
 }
 
 #[derive(Serialize, Clone)]
@@ -529,6 +533,21 @@ fn build_args(a: &DownloadArgs, ffmpeg: Option<&Path>) -> Result<Vec<String>, St
         // YouTube no longer serves combined audio+video files, so every video
         // download has to merge two streams.
         (_, None) => return Err("Video downloads need FFmpeg. Install it and reopen FocusTube.".into()),
+    }
+    // Subtitles: manual ones are preferred, auto-generated ones fill in.
+    let subs = a.subs.as_deref().unwrap_or("off");
+    if a.mode == "video" && subs != "off" {
+        let lang = a.sub_lang.clone().unwrap_or_else(|| "en".into());
+        args.extend(["--write-subs", "--write-auto-subs", "--sub-langs"].map(String::from));
+        // Exact code only: yt-dlp matches case-insensitively, and looser
+        // patterns also pick up translated tracks such as "en-en".
+        args.push(format!("^{}$", crate::subtitles::regex_escape(&lang)));
+        if subs == "embed" {
+            args.push("--embed-subs".into());
+        } else if ffmpeg.is_some() {
+            // SRT plays almost everywhere; VTT is kept when FFmpeg is missing.
+            args.extend(["--convert-subs", "srt"].map(String::from));
+        }
     }
     if let Some(dir) = ffmpeg {
         args.push("--ffmpeg-location".into());

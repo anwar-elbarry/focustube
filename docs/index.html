@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FocusTube — Watch YouTube without the noise</title>
-    <meta name="description" content="A borderless, always-on-top YouTube player for working-while-watching. No comments, no recommendations, no clutter. Download for Windows, macOS, and Linux." />
+    <meta name="description" content="A borderless, always-on-top YouTube player for working-while-watching. Search without the homepage feed, play playlists, add captions and transcripts, and pick up where you left off. No comments, no recommendations, no clutter. Free for Windows, macOS, and Linux." />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0c0b0a" />
     <meta property="og:type" content="website" />
@@ -76,8 +76,8 @@
         <div class="hero-foot">
           <p class="hero-lede">
             A borderless, always-on-top player that floats in a corner of your
-            screen while you work. Paste a link and the video plays — no
-            comments, no recommendations, no browser chrome.
+            screen while you work. Search or paste a link and the video plays —
+            no comments, no recommendations, no browser chrome.
           </p>
           <div class="hero-actions">
             <a class="btn btn-solid" data-os="windows" href="#"><svg class="os-ico"><use href="#ico-windows" /></svg> Download for Windows</a>
@@ -88,15 +88,15 @@
         <div class="metrics-strip">
           <div class="metric">
             <span class="metric-val">&lt;10 MB</span>
-            <span class="metric-lbl">install size</span>
+            <span class="metric-lbl">installer</span>
           </div>
           <div class="metric">
             <span class="metric-val">Zero</span>
-            <span class="metric-lbl">dependencies</span>
+            <span class="metric-lbl">accounts, ads or tracking</span>
           </div>
           <div class="metric">
-            <span class="metric-val">1</span>
-            <span class="metric-lbl">job — play video</span>
+            <span class="metric-val">Ctrl K</span>
+            <span class="metric-lbl">search from anywhere</span>
           </div>
           <div class="metric">
             <span class="metric-val">3</span>
@@ -105,14 +105,16 @@
         </div>
         <div class="ticker" aria-hidden="true">
           <div class="ticker-track">
-            <span>ALWAYS ON TOP</span><span>·</span><span>BORDERLESS WINDOW</span><span>·</span>
+            <span>ALWAYS ON TOP</span><span>·</span><span>SEARCH WITHOUT THE FEED</span><span>·</span>
             <span>NO COMMENTS</span><span>·</span><span>NO RECOMMENDATIONS</span><span>·</span>
-            <span>ADJUSTABLE OPACITY</span><span>·</span><span>SPACE TO PAUSE</span><span>·</span>
-            <span>WORKING-WHILE-WATCHING</span><span>·</span><span>TINY FOOTPRINT</span><span>·</span>
-            <span>ALWAYS ON TOP</span><span>·</span><span>BORDERLESS WINDOW</span><span>·</span>
+            <span>PLAYLISTS</span><span>·</span><span>CAPTIONS &amp; TRANSCRIPTS</span><span>·</span>
+            <span>MINI PLAYER</span><span>·</span><span>CLICK-THROUGH</span><span>·</span>
+            <span>PICK UP WHERE YOU LEFT OFF</span><span>·</span><span>WORKING-WHILE-WATCHING</span><span>·</span>
+            <span>ALWAYS ON TOP</span><span>·</span><span>SEARCH WITHOUT THE FEED</span><span>·</span>
             <span>NO COMMENTS</span><span>·</span><span>NO RECOMMENDATIONS</span><span>·</span>
-            <span>ADJUSTABLE OPACITY</span><span>·</span><span>SPACE TO PAUSE</span><span>·</span>
-            <span>WORKING-WHILE-WATCHING</span><span>·</span><span>TINY FOOTPRINT</span><span>·</span>
+            <span>PLAYLISTS</span><span>·</span><span>CAPTIONS &amp; TRANSCRIPTS</span><span>·</span>
+            <span>MINI PLAYER</span><span>·</span><span>CLICK-THROUGH</span><span>·</span>
+            <span>PICK UP WHERE YOU LEFT OFF</span><span>·</span><span>WORKING-WHILE-WATCHING</span><span>·</span>
           </div>
         </div>
       </section>
@@ -168,30 +170,51 @@
         </div>
         <div class="what-grid">
           <p class="what-lead">
-            FocusTube is a <strong>tiny desktop window</strong> for one job: play
-            the video and get out of your way. It boots in a corner, stays above
-            everything, and never shows you the rest of YouTube.
+            FocusTube is a <strong>tiny desktop window</strong> built around one
+            idea: watch what you came for, then get back to work. It floats in a
+            corner, stays above everything, and never shows you the rest of
+            YouTube.
           </p>
           <div class="what-cards">
             <article class="what-card reveal">
               <div class="card-icon">🔝</div>
               <h3>Always on top</h3>
-              <p>Stays above every other window so the video follows you across apps. Pin it anywhere.</p>
+              <p>Stays above every other window so the video follows you across apps. Shrink it to a corner mini player with <kbd>Ctrl</kbd>+<kbd>M</kbd>.</p>
             </article>
             <article class="what-card reveal">
-              <div class="card-icon">🧹</div>
-              <h3>Borderless &amp; clean</h3>
-              <p>No title bar, no sidebar, no comments. Just the player, sized your way.</p>
+              <div class="card-icon">🔍</div>
+              <h3>Search without the feed</h3>
+              <p>Find videos, songs and playlists from inside the app with <kbd>Ctrl</kbd>+<kbd>K</kbd>. No homepage, no recommendations, no rabbit hole.</p>
+            </article>
+            <article class="what-card reveal">
+              <div class="card-icon">📃</div>
+              <h3>Playlists &amp; resume</h3>
+              <p>Play whole playlists, jump to any video, and pick up exactly where you stopped, with a recent list on the start screen.</p>
+            </article>
+            <article class="what-card reveal">
+              <div class="card-icon">💬</div>
+              <h3>Captions &amp; transcripts</h3>
+              <p>Readable captions in two languages at once, a searchable transcript you can click to jump, and timestamp notes you can export.</p>
             </article>
             <article class="what-card reveal">
               <div class="card-icon">🎚️</div>
-              <h3>Adjustable opacity</h3>
-              <p>Drag the transparency slider to peek through the video while you type or read behind it.</p>
+              <h3>See-through &amp; click-through</h3>
+              <p>Fade the video with the opacity slider, then let clicks pass straight through it to the window behind.</p>
             </article>
             <article class="what-card reveal">
-              <div class="card-icon">⌨️</div>
-              <h3>Keyboard control</h3>
-              <p>Space pauses and plays, and your media key works even when another app is active.</p>
+              <div class="card-icon">⬇️</div>
+              <h3>Downloads &amp; offline</h3>
+              <p>Save a video or its audio, or chosen videos from a playlist, and play them later without a connection. Sizes shown before you start.</p>
+            </article>
+            <article class="what-card reveal">
+              <div class="card-icon">🍅</div>
+              <h3>Focus timer</h3>
+              <p>A built-in 25/5 or 50/10 timer that pauses the video when it's break time, plus playback speed from 0.75× to 2×.</p>
+            </article>
+            <article class="what-card reveal">
+              <div class="card-icon">✨</div>
+              <h3>AI, with your own key</h3>
+              <p>Optional: summarize a video, ask it questions, or translate its captions. Connect your own Claude, OpenAI, Gemini or local model, or skip it entirely.</p>
             </article>
           </div>
         </div>
@@ -209,6 +232,7 @@
             <h3>YouTube in Browser</h3>
             <ul>
               <li>Comments, recommendations, shorts</li>
+              <li>Searching starts on a feed built to distract</li>
               <li>Autoplay never ends</li>
               <li>Loses focus behind your IDE</li>
               <li>Takes a full browser tab</li>
@@ -220,6 +244,7 @@
             <h3>FocusTube</h3>
             <ul>
               <li>Clean player — nothing else</li>
+              <li>Search without a homepage feed</li>
               <li>You choose what to play</li>
               <li>Always on top, always visible</li>
               <li>Lightweight &lt;10 MB window</li>
@@ -251,8 +276,8 @@
               <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             </div>
             <span class="step-num">2</span>
-            <h3>Paste a link</h3>
-            <p>Any YouTube URL — watch, youtu.be, or shorts — then press <kbd>↵</kbd>. The video loads instantly in the clean player.</p>
+            <h3>Search or paste a link</h3>
+            <p>Type what you're looking for, or paste any YouTube link (video, playlist, youtu.be or Shorts), then press <kbd>↵</kbd>. It plays right in the clean player.</p>
           </div>
           <div class="step reveal">
             <div class="step-icon">
@@ -295,13 +320,28 @@
           </article>
           <article class="tip-card reveal">
             <span class="tip-num">05</span>
-            <h3>Multiple instances</h3>
-            <p>Run multiple FocusTube windows to watch several videos at once (great for monitoring streams or comparing tutorials).</p>
+            <h3>Search from anywhere</h3>
+            <p>Press <kbd>Ctrl</kbd>+<kbd>K</kbd> while something is playing to find the next video, song or playlist without stopping. The ⬇ button on any result saves it for later.</p>
           </article>
           <article class="tip-card reveal">
             <span class="tip-num">06</span>
+            <h3>Captions out of sync?</h3>
+            <p>Press <kbd>G</kbd> or <kbd>H</kbd> to move subtitles earlier or later in quarter-second steps. Need subtitles for a movie file? Use “Find subtitles online” in the CC menu.</p>
+          </article>
+          <article class="tip-card reveal">
+            <span class="tip-num">07</span>
+            <h3>Notes with timestamps</h3>
+            <p>Open the transcript with <kbd>Shift</kbd>+<kbd>T</kbd>, bookmark the lines that matter, add your own words, and export everything as Markdown with links back to the exact moment.</p>
+          </article>
+          <article class="tip-card reveal">
+            <span class="tip-num">08</span>
+            <h3>Caption strip</h3>
+            <p>Press <kbd>Shift</kbd>+<kbd>S</kbd> to turn the window into a slim bar of large live captions. Follow a talk while it barely takes any screen space.</p>
+          </article>
+          <article class="tip-card reveal">
+            <span class="tip-num">09</span>
             <h3>No account needed</h3>
-            <p>FocusTube uses the YouTube IFrame API — you don't need to sign in to Google or YouTube. Your watch history stays private.</p>
+            <p>You never sign in to Google or YouTube. Your watch history, notes and positions are stored only on your computer.</p>
           </article>
         </div>
       </section>
@@ -314,13 +354,18 @@
         </div>
         <p class="block-sub">Everything is on the keyboard. On macOS, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</p>
         <div class="spec-table" role="table" aria-label="FocusTube keyboard controls">
+          <div class="spec-row" role="row"><span role="cell">Search YouTube</span><span role="cell"><kbd>Ctrl</kbd>+<kbd>K</kbd> · or type in the start box</span></div>
           <div class="spec-row" role="row"><span role="cell">Play / pause</span><span role="cell"><kbd>Space</kbd> · media <kbd>Play/Pause</kbd> key (works from any app)</span></div>
           <div class="spec-row" role="row"><span role="cell">Next / previous in a playlist</span><span role="cell"><kbd>Shift</kbd>+<kbd>N</kbd> · <kbd>Shift</kbd>+<kbd>P</kbd></span></div>
           <div class="spec-row" role="row"><span role="cell">Faster / slower</span><span role="cell"><kbd>Shift</kbd>+<kbd>&gt;</kbd> · <kbd>Shift</kbd>+<kbd>&lt;</kbd></span></div>
           <div class="spec-row" role="row"><span role="cell">Mini player</span><span role="cell"><kbd>Ctrl</kbd>+<kbd>M</kbd></span></div>
           <div class="spec-row" role="row"><span role="cell">Click-through on / off</span><span role="cell"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd></span></div>
+          <div class="spec-row" role="row"><span role="cell">Captions on / off</span><span role="cell"><kbd>C</kbd></span></div>
+          <div class="spec-row" role="row"><span role="cell">Subtitles earlier / later</span><span role="cell"><kbd>G</kbd> · <kbd>H</kbd> (0.25 s steps)</span></div>
+          <div class="spec-row" role="row"><span role="cell">Transcript, notes &amp; AI</span><span role="cell"><kbd>Shift</kbd>+<kbd>T</kbd></span></div>
+          <div class="spec-row" role="row"><span role="cell">Caption strip</span><span role="cell"><kbd>Shift</kbd>+<kbd>S</kbd></span></div>
           <div class="spec-row" role="row"><span role="cell">Open a local file</span><span role="cell"><kbd>Ctrl</kbd>+<kbd>O</kbd></span></div>
-          <div class="spec-row" role="row"><span role="cell">Load video</span><span role="cell"><kbd>↵</kbd> after pasting a link</span></div>
+          <div class="spec-row" role="row"><span role="cell">Load or search</span><span role="cell"><kbd>↵</kbd> after typing or pasting a link</span></div>
           <div class="spec-row" role="row"><span role="cell">Pin / unpin on top</span><span role="cell">title-bar pin button</span></div>
           <div class="spec-row" role="row"><span role="cell">New video</span><span role="cell">title-bar + button</span></div>
           <div class="spec-row" role="row"><span role="cell">Minimize</span><span role="cell">title-bar — button</span></div>
@@ -338,7 +383,7 @@
         <div class="faq-list">
           <details class="faq-item" open>
             <summary class="faq-q">Do I need a YouTube account or API key?</summary>
-            <p class="faq-a">No. FocusTube uses the same YouTube IFrame API that works in any browser. Paste any public YouTube URL and it plays. No account, no API key, no sign-in.</p>
+            <p class="faq-a">No. Watching, searching and playlists need no account, key or sign-in. Two optional extras use your own free keys if you want them: AI features (a key from Claude, OpenAI, Gemini or OpenRouter, or a local model) and online subtitle search (an OpenSubtitles.com key).</p>
           </details>
           <details class="faq-item">
             <summary class="faq-q">Does FocusTube show ads?</summary>
@@ -346,7 +391,15 @@
           </details>
           <details class="faq-item">
             <summary class="faq-q">Does it work with YouTube Music or playlists?</summary>
-            <p class="faq-a">FocusTube loads single videos. YouTube Music URLs and playlists aren't supported yet — paste a direct video link and it plays.</p>
+            <p class="faq-a">Yes. Paste a playlist link or search the Playlists tab, then browse the whole list, jump to any video, or skip ahead with <kbd>Shift</kbd>+<kbd>N</kbd>. The Music tab searches YouTube Music songs, which play in the same clean window.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">How do search and downloads work?</summary>
+            <p class="faq-a">Both use the open-source tool yt-dlp (plus FFmpeg for HD video and MP3). FocusTube fetches them once, the first time you use either feature, so the installer stays small. Pasting links works without them. Please only download content you have the right to.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">How do the AI features work, and what do they cost?</summary>
+            <p class="faq-a">They're optional and use your own AI account: add a key under ⋯ → AI features. FocusTube then sends the video's title and transcript to the provider you chose, billed to your account at their usual rates. Without a key, nothing is sent and every other feature works as normal.</p>
           </details>
           <details class="faq-item">
             <summary class="faq-q">Can I watch live streams?</summary>
@@ -358,7 +411,7 @@
           </details>
           <details class="faq-item">
             <summary class="faq-q">Does it collect any data?</summary>
-            <p class="faq-a">Zero. FocusTube has no analytics, no telemetry, no tracking, and no ads. It never connects to any server except YouTube's embedded player (which needs to fetch the video). The app never phones home.</p>
+            <p class="faq-a">Zero. FocusTube has no analytics, no telemetry, no tracking, and no ads, and it has no server of its own. It talks to YouTube to play and search videos, and checks GitHub for new versions. It only contacts OpenSubtitles or an AI provider if you add a key for them. Your history, notes and keys stay on your computer.</p>
           </details>
         </div>
       </section>

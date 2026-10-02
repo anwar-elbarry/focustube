@@ -44,4 +44,12 @@ export const icons = {
   plus: "M12 5v14M5 12h14",
   minimize: "M5 12h14",
   history: "M3 12a9 9 0 1 0 3-6.7 M3 4v5h5 M12 7v5l3 2",
+  cc: "M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M10.5 10a2.2 2.2 0 1 0 0 4 M17 10a2.2 2.2 0 1 0 0 4",
+  transcript: "M5 4h14v16H5z M8 8h8 M8 12h8 M8 16h5",
+  strip: "M3 9h18v6H3z M7 12h6",
+  note: "M12 5v14M5 12h14",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M21 21l-5-5",
+  trash: "M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13",
+  bookmark: "M6 3h12v18l-6-4-6 4z",
+  sparkle: "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z",
 };

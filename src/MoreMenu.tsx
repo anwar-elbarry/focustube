@@ -23,6 +23,8 @@ export default function MoreMenu({
   onCheckUpdate,
   onOpenUpdate,
   onWebsite,
+  aiReady,
+  onOpenAi,
   onClose,
 }: {
   speed: number;
@@ -40,6 +42,8 @@ export default function MoreMenu({
   onCheckUpdate: () => void;
   onOpenUpdate: () => void;
   onWebsite: () => void;
+  aiReady: boolean;
+  onOpenAi: () => void;
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -91,6 +95,13 @@ export default function MoreMenu({
           <small>Clicks pass to the window behind</small>
         </span>
         <kbd>{mod}+Alt+C</kbd>
+      </button>
+      <button className="menu-item" onClick={act(onOpenAi)} role="menuitem">
+        <Icon d={icons.sparkle} />
+        <span>
+          AI features
+          <small>{aiReady ? "Connected with your key" : "Use your own API key"}</small>
+        </span>
       </button>
       <button className="menu-item" onClick={act(onOpenFile)} role="menuitem">
         <Icon d={icons.folder} />

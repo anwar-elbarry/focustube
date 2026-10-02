@@ -42,11 +42,17 @@ Paste a link → get a clean, floating video player with zero distractions. It f
 | 🌫️ | **Adjustable Opacity** | Drag the slider — the player becomes semi-transparent so you can see your work through it |
 | 🖱️ | **Click-through Mode** | Clicks pass straight through the player to the window behind it. `Ctrl+Alt+C` toggles it |
 | 🪟 | **Mini Player** | One shortcut (`Ctrl+M`) shrinks it into a small corner player with controls on hover |
+| 🔍 | **Search Inside the App** | Search YouTube videos, YouTube Music songs and playlists without opening a browser (`Ctrl+K`, or just type in the start box). Play or download any result in one click |
 | 📃 | **Playlists** | Paste a playlist link, browse every video, jump to any of them or skip ahead (`Shift+N` / `Shift+P`) |
 | ⏯️ | **Pick Up Where You Left Off** | Remembers your position in every video and playlist, with a recent list on the start screen |
 | ⬇️ | **Downloads** | Save videos (up to 4K, MP4) or audio (MP3) — single videos or chosen videos from a playlist, with sizes shown before you start. Powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp) |
 | 📁 | **Offline Playback** | Open downloaded or local video and audio files right in the player (`Ctrl+O`) |
 | ⏩ | **Playback Speed** | 0.75× to 2× from the menu, or `Shift+<` / `Shift+>` |
+| 💬 | **Captions & Subtitles** | Styled captions for YouTube and local files (auto-loads `video.srt` / `.vtt`), dual-language subtitles, and subtitles with downloads |
+| 🔎 | **Find Subtitles Online** | Search OpenSubtitles.com and apply in one click. Local files are matched by their exact file hash; adjust timing with `G` / `H`. Uses your own free OpenSubtitles API key |
+| 📝 | **Transcript & Notes** | Searchable transcript that follows the video, click-to-jump, timestamp notes exported to Markdown |
+| 🎞️ | **Caption Strip** | Shrink to a slim bar of large live captions (`Shift+S`) |
+| ✨ | **AI with Your Own Key** | Video summaries with clickable chapters, ask questions about a video, AI-translated captions. Bring a key from Claude, OpenAI, Gemini, OpenRouter, or use a local model. No key, no AI, everything else still works |
 | 🍅 | **Focus Timer** | Built-in 25/5 or 50/10 Pomodoro timer that pauses the video when it's break time |
 | ⌨️ | **Play/Pause Anywhere** | `Space` while FocusTube is focused, or your keyboard's media key from any app |
 | 🔗 | **Any YouTube URL** | Works with `youtube.com/watch`, `youtu.be`, Shorts and playlist links |
@@ -69,6 +75,7 @@ Paste a link → get a clean, floating video player with zero distractions. It f
 
 | Keys | Action |
 |---|---|
+| `Ctrl+K` | Search YouTube |
 | `Space` | Play / pause (while FocusTube is focused) |
 | Media Play/Pause key | Play / pause from any app |
 | `Shift+N` / `Shift+P` | Next / previous video in a playlist |
@@ -76,8 +83,14 @@ Paste a link → get a clean, floating video player with zero distractions. It f
 | `Ctrl+M` | Mini player on / off |
 | `Ctrl+Alt+C` | Click-through on / off |
 | `Ctrl+O` | Open a local file |
+| `C` | Captions on / off |
+| `Shift+T` | Transcript, notes & AI |
+| `Shift+S` | Caption strip on / off |
+| `G` / `H` | Subtitles earlier / later (0.25 s) |
 
 On macOS use `⌘` instead of `Ctrl`.
+
+> **AI features are bring-your-own-key.** Add a key under **⋯ → AI features**. It is stored only on your computer and sent only to the provider you choose; using a feature sends the video's title and transcript to that provider, billed to your account. Captions for YouTube videos use the downloader tools (one-time setup).
 
 [![Download for Windows](https://img.shields.io/badge/⬇%20Download-Windows-0078D4?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)
 [![Download for macOS](https://img.shields.io/badge/⬇%20Download-macOS-lightgrey?style=for-the-badge&colorA=0c0b0a)](https://github.com/anwar-elbarry/focustube/releases/latest)

@@ -4,14 +4,33 @@ import LocalPlayer, { fileName } from "./LocalPlayer";
 import DownloadPanel from "./DownloadPanel";
 import PlaylistPanel from "./PlaylistPanel";
 import MoreMenu, { SPEEDS } from "./MoreMenu";
+import CaptionsMenu, { Translating } from "./CaptionsMenu";
+import AiSettingsPanel from "./AiSettingsPanel";
+import SubtitleSearchPanel from "./SubtitleSearchPanel";
+import SearchPanel, { SearchItem, itemUrl } from "./SearchPanel";
+import type { Mode } from "./downloads";
+import { translateCues, useAiConfig } from "./ai";
+import CaptionOverlay from "./CaptionOverlay";
+import TranscriptPanel from "./TranscriptPanel";
 import { Icon, icons } from "./Icon";
-import { formatDuration, isActive, useDownloads } from "./downloads";
+import { formatDuration, getStatus, isActive, useDownloads } from "./downloads";
+import {
+  CaptionPrefs,
+  CaptionSource,
+  Cue,
+  langName,
+  loadCaptionPrefs,
+  parseSubtitles,
+  saveCaptionPrefs,
+  useCaptions,
+  usePlayerTime,
+} from "./captions";
 import { HistoryItem, loadHistory, removeHistory } from "./history";
 import { chime, formatClock, useFocusTimer } from "./focusTimer";
 import { checkForUpdate, useUpdateCheck } from "./updates";
 import { parsePlaylistId, parseVideoId, thumbUrl } from "./youtube";
 import { currentMonitor, getCurrentWindow } from "@tauri-apps/api/window";
-import { PhysicalPosition, PhysicalSize } from "@tauri-apps/api/dpi";
+import { LogicalSize, PhysicalPosition, PhysicalSize } from "@tauri-apps/api/dpi";
 import { register, unregister } from "@tauri-apps/plugin-global-shortcut";
 import { open } from "@tauri-apps/plugin-shell";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
@@ -21,6 +40,14 @@ const CLICK_THROUGH_KEY = "CommandOrControl+Alt+C";
 const MEDIA_EXTS = ["mp4", "webm", "mkv", "mov", "m4v", "mp3", "m4a", "aac", "ogg", "opus", "wav", "flac"];
 // 16:9 at the window's minimum height.
 const MINI = { width: 427, height: 240, margin: 16 };
+const MIN_SIZE = { width: 320, height: 240 };
+// YouTube's embed rules require a visible player of at least 200×200, so a
+// YouTube strip keeps the video beside the captions; local files can go thin.
+const STRIP = { youtubeHeight: 200, youtubeMinWidth: 760, fileHeight: 96, fileMinWidth: 560 };
+
+// AI translations made this session, keyed by video + track + language, so
+// switching back and forth never pays for the same translation twice.
+const translationCache = new Map<string, Cue[]>();
 
 type Toast = {
   id: number;
@@ -37,7 +64,17 @@ export default function App() {
   const [error, setError] = useState("");
   const [pinned, setPinned] = useState(true);
   const [opacity, setOpacity] = useState(1);
-  const [sheet, setSheet] = useState<"downloads" | "playlist" | null>(null);
+  const [sheet, setSheet] = useState<
+    "downloads" | "playlist" | "transcript" | "ai" | "subsearch" | "search" | null
+  >(null);
+  /** What the search panel opens with. */
+  const [searchSeed, setSearchSeed] = useState("");
+  /** Set when the download panel is opened from a search result. */
+  const [dlSeed, setDlSeed] = useState<{ url: string; mode?: Mode } | null>(null);
+  /** Subtitle timing adjustment in seconds; positive = captions appear later. */
+  const [subDelay, setSubDelay] = useState(0);
+  const [translating, setTranslating] = useState<Translating>(null);
+  const ai = useAiConfig();
   const [menuOpen, setMenuOpen] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [mini, setMini] = useState(false);
@@ -45,6 +82,10 @@ export default function App() {
   const [toast, setToast] = useState<Toast | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>(loadHistory);
   const [update, setUpdate] = useUpdateCheck();
+  const [capPrefs, setCapPrefsState] = useState<CaptionPrefs>(loadCaptionPrefs);
+  const [capMenuOpen, setCapMenuOpen] = useState(false);
+  const [strip, setStrip] = useState(false);
+  const [toolsReady, setToolsReady] = useState(false);
 
   const downloads = useDownloads();
   const activeDownloads = downloads.jobs.filter(isActive).length;
@@ -54,6 +95,37 @@ export default function App() {
   const appWindow = getCurrentWindow();
   const hasSource = !!(videoId || listId || filePath);
   const hasPlaylist = !!listId && !!playlist && playlist.ids.length > 1;
+
+  // ---------- Captions ----------
+  // The video actually playing (inside a playlist it changes as you go).
+  const currentVideoId = playlist ? (playlist.ids[playlist.index] ?? videoId) : videoId;
+  const capSource: CaptionSource = filePath
+    ? { kind: "file", path: filePath }
+    : currentVideoId
+      ? { kind: "youtube", videoId: currentVideoId }
+      : null;
+  const capActive = capPrefs.enabled || sheet === "transcript" || strip;
+  const captions = useCaptions(capSource, capActive, toolsReady, capPrefs);
+  const time = usePlayerTime(playerRef, capActive && hasSource);
+  const setCapPrefs = (p: CaptionPrefs) => {
+    setCapPrefsState(p);
+    saveCaptionPrefs(p);
+  };
+
+  const capSourceKey = filePath ?? currentVideoId ?? "";
+  useEffect(() => {
+    setTranslating(null);
+    setSubDelay(0);
+  }, [capSourceKey]);
+  // The clock captions are matched against, after the timing adjustment.
+  const capTime = time - subDelay;
+
+  // yt-dlp may get installed from the downloads panel at any time.
+  useEffect(() => {
+    getStatus()
+      .then((s) => setToolsReady(s.ytdlp))
+      .catch(() => {});
+  }, [sheet]);
 
   // ---------- Toasts ----------
   const toastTimer = useRef<number>();
@@ -127,10 +199,30 @@ export default function App() {
     const id = parseVideoId(input);
     const list = parsePlaylistId(input);
     if (!id && !list) {
-      setError("That doesn't look like a YouTube video or playlist link.");
+      // Not a link: treat it as a search.
+      if (input.trim()) openSearch(input.trim());
+      else setError("Paste a YouTube link or type something to search.");
       return;
     }
     playYouTube(id, list, input);
+  }
+
+  function openSearch(seed = "") {
+    setMenuOpen(false);
+    setCapMenuOpen(false);
+    setSearchSeed(seed);
+    setSheet("search");
+  }
+
+  function playSearchResult(it: SearchItem) {
+    const url = itemUrl(it);
+    if (it.kind === "playlist") playYouTube(null, it.id, url);
+    else playYouTube(it.id, null, url);
+  }
+
+  function downloadSearchResult(it: SearchItem) {
+    setDlSeed({ url: itemUrl(it), mode: it.kind === "song" ? "audio" : undefined });
+    setSheet("downloads");
   }
 
   function playFile(path: string) {
@@ -159,6 +251,7 @@ export default function App() {
   }
 
   function reset() {
+    if (strip) toggleStrip();
     setVideoId(null);
     setListId(null);
     setFilePath(null);
@@ -167,7 +260,49 @@ export default function App() {
     setInput("");
   }
 
+  async function restoreBounds() {
+    const saved = savedBounds.current;
+    savedBounds.current = null;
+    if (saved) {
+      await appWindow.setSize(saved.size);
+      await appWindow.setPosition(saved.pos);
+    }
+  }
+
+  async function toggleStrip() {
+    if (strip) {
+      await restoreBounds();
+      await appWindow.setMinSize(new LogicalSize(MIN_SIZE.width, MIN_SIZE.height));
+      setStrip(false);
+      return;
+    }
+    if (!hasSource) return;
+    const [pos, size, scale] = await Promise.all([
+      appWindow.outerPosition(),
+      appWindow.outerSize(),
+      appWindow.scaleFactor(),
+    ]);
+    // Coming from mini mode, keep the original (pre-mini) bounds.
+    if (!mini || !savedBounds.current) savedBounds.current = { pos, size };
+    const isFile = !!filePath;
+    const h = isFile ? STRIP.fileHeight : STRIP.youtubeHeight;
+    const minW = isFile ? STRIP.fileMinWidth : STRIP.youtubeMinWidth;
+    await appWindow.setMinSize(new LogicalSize(MIN_SIZE.width, Math.min(h, MIN_SIZE.height)));
+    await appWindow.setSize(new PhysicalSize(Math.max(size.width, Math.round(minW * scale)), Math.round(h * scale)));
+    setMini(false);
+    setSheet(null);
+    setCapMenuOpen(false);
+    setMenuOpen(false);
+    setPinned(true);
+    if (!capPrefs.enabled) setCapPrefs({ ...capPrefs, enabled: true });
+    setStrip(true);
+  }
+
   async function toggleMini() {
+    if (strip) {
+      await toggleStrip();
+      return;
+    }
     if (!mini) {
       const [pos, size, monitor, scale] = await Promise.all([
         appWindow.outerPosition(),
@@ -194,13 +329,87 @@ export default function App() {
       setSheet(null);
       setMini(true);
     } else {
-      const saved = savedBounds.current;
-      if (saved) {
-        await appWindow.setSize(saved.size);
-        await appWindow.setPosition(saved.pos);
-      }
+      await restoreBounds();
       setMini(false);
     }
+  }
+
+  async function loadSubtitleFile() {
+    const picked = await openDialog({
+      multiple: false,
+      title: "Load a subtitle file",
+      filters: [{ name: "Subtitles", extensions: ["srt", "vtt"] }],
+    });
+    if (typeof picked === "string") {
+      captions.addFile(picked);
+      if (!capPrefs.enabled) setCapPrefs({ ...capPrefs, enabled: true });
+    }
+  }
+
+  async function translateCaptions(lang: string) {
+    const source = captions.primary;
+    if (!source || !captions.cues.length) return;
+    const videoKey = filePath ?? currentVideoId ?? "";
+    const cacheKey = `${videoKey}|${source.id}|${lang}`;
+    const track = (cues: Cue[]) => ({
+      id: `ai:${lang}`,
+      lang,
+      label: `${langName(lang)} (AI)`,
+      auto: true,
+      cues,
+    });
+    const hit = translationCache.get(cacheKey);
+    if (hit) {
+      captions.addGenerated(track(hit));
+      return;
+    }
+    setTranslating({ lang, done: 0, total: captions.cues.length });
+    try {
+      const cues = await translateCues(captions.cues, lang, (done, total) =>
+        setTranslating({ lang, done, total })
+      );
+      translationCache.set(cacheKey, cues);
+      captions.addGenerated(track(cues));
+      setCapPrefs({ ...capPrefs, enabled: true, lang2: lang });
+      setTranslating(null);
+      showToast(`${langName(lang)} captions ready — shown under the original.`);
+    } catch (e) {
+      setTranslating({ lang, done: 0, total: 0, error: String(e) });
+    }
+  }
+
+  function applyFoundSubtitles(text: string, label: string, lang: string) {
+    const cues = parseSubtitles(text);
+    if (!cues.length) {
+      showToast("That subtitle file couldn't be read.");
+      return;
+    }
+    captions.addGenerated({ id: `os:${label}`, lang, label, auto: false, cues }, "primary");
+    setSubDelay(0);
+    if (!capPrefs.enabled) setCapPrefs({ ...capPrefs, enabled: true });
+  }
+
+  function openSubtitleSearch() {
+    setCapMenuOpen(false);
+    setMenuOpen(false);
+    setSheet("subsearch");
+  }
+
+  function changeDelay(next: number) {
+    const d = Math.round(next * 100) / 100;
+    setSubDelay(d);
+    showToast(d === 0 ? "Subtitle timing reset" : `Subtitles ${d > 0 ? "later" : "earlier"} by ${Math.abs(d).toFixed(2)}s`, undefined, 1500);
+  }
+
+  function openAiSettings() {
+    setCapMenuOpen(false);
+    setMenuOpen(false);
+    setSheet("ai");
+  }
+
+  function openTranscript() {
+    setCapMenuOpen(false);
+    setSheet((s) => (s === "transcript" ? null : "transcript"));
   }
 
   const setClickThroughMode = useCallback(
@@ -252,8 +461,23 @@ export default function App() {
 
   // ---------- Keyboard ----------
   // Handlers read the latest state through this ref.
-  const actions = useRef({ toggleMini, openFile, stepSpeed, setClickThroughMode });
-  actions.current = { toggleMini, openFile, stepSpeed, setClickThroughMode };
+  const toggleCaptions = () => setCapPrefs({ ...capPrefs, enabled: !capPrefs.enabled });
+  const keyActions = {
+    toggleMini,
+    openFile,
+    stepSpeed,
+    setClickThroughMode,
+    clickThrough,
+    toggleCaptions,
+    openTranscript,
+    toggleStrip,
+    hasSource,
+    subDelay,
+    changeDelay,
+    openSearch,
+  };
+  const actions = useRef(keyActions);
+  actions.current = keyActions;
 
   useEffect(() => {
     const playPause = () => {
@@ -274,6 +498,11 @@ export default function App() {
       if (e.repeat) return;
       const a = actions.current;
       const ctrl = e.ctrlKey || e.metaKey;
+      if (ctrl && !e.shiftKey && !e.altKey && e.code === "KeyK") {
+        e.preventDefault();
+        a.openSearch();
+        return;
+      }
       if (ctrl && !e.shiftKey && e.code === "KeyO") {
         e.preventDefault();
         a.openFile();
@@ -295,10 +524,34 @@ export default function App() {
       // some layouts, so it must not trigger click-through.
       if (ctrl && e.altKey && e.code === "KeyC" && !e.getModifierState("AltGraph")) {
         e.preventDefault();
-        a.setClickThroughMode(true);
+        a.setClickThroughMode(!a.clickThrough);
         return;
       }
       // YouTube's own shortcuts: Shift+N / Shift+P, Shift+> / Shift+<.
+      // Captions: C (like YouTube), Shift+T transcript, Shift+S strip.
+      if (a.hasSource && !ctrl && !e.altKey) {
+        if (!e.shiftKey && e.code === "KeyC") {
+          e.preventDefault();
+          a.toggleCaptions();
+          return;
+        }
+        if (e.shiftKey && e.code === "KeyT") {
+          e.preventDefault();
+          a.openTranscript();
+          return;
+        }
+        if (e.shiftKey && e.code === "KeyS") {
+          e.preventDefault();
+          a.toggleStrip();
+          return;
+        }
+        // Subtitle timing, like VLC: G = earlier, H = later.
+        if (!e.shiftKey && (e.code === "KeyG" || e.code === "KeyH")) {
+          e.preventDefault();
+          a.changeDelay(a.subDelay + (e.code === "KeyH" ? 0.25 : -0.25));
+          return;
+        }
+      }
       if (e.shiftKey && (e.code === "KeyN" || e.code === "KeyP")) {
         e.preventDefault();
         if (e.code === "KeyN") playerRef.current?.nextVideo?.();
@@ -328,7 +581,10 @@ export default function App() {
   const timer = focus.timer;
 
   return (
-    <div className={`app ${mini ? "is-mini" : ""}`} style={{ opacity }}>
+    <div
+      className={`app ${mini ? "is-mini" : ""} ${strip ? `is-strip ${filePath ? "strip-file" : "strip-youtube"}` : ""}`}
+      style={{ opacity }}
+    >
       <header className="titlebar">
         <div className="drag" data-tauri-drag-region />
         <div className="brand">
@@ -400,6 +656,13 @@ export default function App() {
             </>
           )}
           <button
+            className={`iconbtn ${sheet === "search" ? "is-active" : ""}`}
+            onClick={() => (sheet === "search" ? setSheet(null) : openSearch())}
+            title="Search YouTube (Ctrl+K)"
+          >
+            <Icon d={icons.search} />
+          </button>
+          <button
             className={`iconbtn hide-mini ${sheet === "downloads" ? "is-active" : ""}`}
             onClick={() => setSheet((s) => (s === "downloads" ? null : "downloads"))}
             title={activeDownloads ? `Downloads (${activeDownloads} in progress)` : "Download video or playlist"}
@@ -408,8 +671,25 @@ export default function App() {
             {activeDownloads > 0 && <span className="iconbtn-badge">{activeDownloads}</span>}
           </button>
           {hasSource && (
+            <button
+              className={`iconbtn cc-btn ${capPrefs.enabled ? "is-active" : ""}`}
+              onClick={() => {
+                setMenuOpen(false);
+                setCapMenuOpen((v) => !v);
+              }}
+              title="Captions (C)"
+            >
+              <Icon d={icons.cc} />
+            </button>
+          )}
+          {hasSource && (
             <button className="iconbtn hide-mini" onClick={reset} title="New video">
               <Icon d={icons.plus} />
+            </button>
+          )}
+          {strip && (
+            <button className="iconbtn" onClick={toggleStrip} title="Exit caption strip (Shift+S)">
+              <Icon d={icons.expand} />
             </button>
           )}
           {mini && (
@@ -419,7 +699,10 @@ export default function App() {
           )}
           <button
             className={`iconbtn more-btn ${menuOpen ? "is-active" : ""}`}
-            onClick={() => setMenuOpen((v) => !v)}
+            onClick={() => {
+              setCapMenuOpen(false);
+              setMenuOpen((v) => !v);
+            }}
             title="More"
           >
             <Icon d={icons.more} size={18} />
@@ -454,12 +737,95 @@ export default function App() {
           onCheckUpdate={manualUpdateCheck}
           onOpenUpdate={() => update && open(update.url)}
           onWebsite={() => open(SITE)}
+          aiReady={ai.ready}
+          onOpenAi={openAiSettings}
           onClose={() => setMenuOpen(false)}
         />
       )}
 
+      {capMenuOpen && hasSource && (
+        <CaptionsMenu
+          captions={captions}
+          prefs={capPrefs}
+          onPrefs={setCapPrefs}
+          isFile={!!filePath}
+          strip={strip}
+          onToggleStrip={() => {
+            setCapMenuOpen(false);
+            toggleStrip();
+          }}
+          onOpenTranscript={openTranscript}
+          onLoadFile={loadSubtitleFile}
+          onSetup={() => {
+            setCapMenuOpen(false);
+            setSheet("downloads");
+          }}
+          aiReady={ai.ready}
+          translating={translating}
+          onTranslate={translateCaptions}
+          onOpenAiSettings={openAiSettings}
+          delay={subDelay}
+          onDelay={changeDelay}
+          onFindOnline={openSubtitleSearch}
+          onClose={() => setCapMenuOpen(false)}
+        />
+      )}
+      {sheet === "ai" && <AiSettingsPanel onClose={() => setSheet(null)} />}
+      {sheet === "search" && (
+        <SearchPanel
+          initialQuery={searchSeed}
+          onPlay={playSearchResult}
+          onDownload={downloadSearchResult}
+          onSetup={() => setSheet("downloads")}
+          onClose={() => setSheet(null)}
+        />
+      )}
+      {sheet === "subsearch" && hasSource && (
+        <SubtitleSearchPanel
+          source={
+            filePath
+              ? { kind: "file", path: filePath }
+              : {
+                  kind: "youtube",
+                  title: (playerRef.current?.getVideoData?.()?.title as string | undefined) ?? "",
+                }
+          }
+          defaultLang={capPrefs.lang}
+          onApply={applyFoundSubtitles}
+          onClose={() => setSheet(null)}
+        />
+      )}
+
       {sheet === "downloads" && (
-        <DownloadPanel initialUrl={input} downloads={downloads} onPlayFile={playFile} onClose={() => setSheet(null)} />
+        <DownloadPanel
+          initialUrl={dlSeed?.url ?? input}
+          initialMode={dlSeed?.mode}
+          downloads={downloads}
+          onPlayFile={playFile}
+          defaultSubLang={capPrefs.lang}
+          onClose={() => {
+            setDlSeed(null);
+            setSheet(null);
+          }}
+        />
+      )}
+      {sheet === "transcript" && hasSource && (
+        <TranscriptPanel
+          captions={captions}
+          time={capTime}
+          notesKey={filePath ? `f:${filePath}` : currentVideoId ? `v:${currentVideoId}` : null}
+          title={
+            filePath
+              ? fileName(filePath)
+              : (playerRef.current?.getVideoData?.()?.title as string | undefined) || "YouTube video"
+          }
+          url={!filePath && currentVideoId ? `https://www.youtube.com/watch?v=${currentVideoId}` : null}
+          onSeek={(t) => playerRef.current?.seekTo?.(Math.max(0, t + subDelay), true)}
+          onSetup={() => setSheet("downloads")}
+          aiReady={ai.ready}
+          onOpenAiSettings={openAiSettings}
+          onClose={() => setSheet(null)}
+        />
       )}
       {sheet === "playlist" && hasPlaylist && (
         <PlaylistPanel
@@ -483,7 +849,11 @@ export default function App() {
             onPlaylist={setPlaylist}
             onResume={onResume}
           />
-        ) : (
+        ) : null}
+        {hasSource && (capPrefs.enabled || strip) && (
+          <CaptionOverlay cues={captions.cues} cues2={captions.cues2} time={capTime} prefs={capPrefs} strip={strip} />
+        )}
+        {!hasSource && (
           <div className="empty">
             <div className="empty-glow" />
             <div className="empty-mark">
@@ -503,7 +873,7 @@ export default function App() {
                 <path d="M 214 180 C 214 171.5 223.3 166.3 230.5 170.7 L 338.5 246.7 C 345.5 251 345.5 261 338.5 265.3 L 230.5 341.3 C 223.3 345.7 214 340.5 214 332 Z" fill="#FF6A3D" />
               </svg>
             </div>
-            <h1 className="empty-title">Paste a YouTube link</h1>
+            <h1 className="empty-title">Search or paste a YouTube link</h1>
             <p className="empty-sub">
               Watch it in a clean, always-on-top window — no comments, no clutter.
             </p>
@@ -523,17 +893,17 @@ export default function App() {
                 autoFocus
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Video or playlist link"
+                placeholder="Search videos & music, or paste a link"
               />
               <button type="submit" className="bar-go">
-                Load
+                {input.trim() && !parseVideoId(input) && !parsePlaylistId(input) ? "Search" : "Load"}
               </button>
             </form>
 
             {error && <p className="error">{error}</p>}
 
             <p className="empty-hint">
-              <kbd>↵</kbd> play · <kbd>Space</kbd> pause ·{" "}
+              <kbd>↵</kbd> play · <kbd>Ctrl</kbd>+<kbd>K</kbd> search ·{" "}
               <button className="linkbtn" onClick={openFile}>
                 open a file
               </button>

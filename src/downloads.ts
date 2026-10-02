@@ -65,6 +65,9 @@ export type Job = {
   items: string | null;
   /** How many videos `items` selects. */
   selected: number | null;
+  /** Subtitles: "off" | "file" (.srt next to the video) | "embed". */
+  subs: "off" | "file" | "embed";
+  subLang: string | null;
   status: JobStatus;
   /** 0–1 for the current file, null when unknown. */
   progress: number | null;
@@ -150,7 +153,7 @@ export function useVideoSizes(key: string | null, ids: string[]) {
 
 export type NewJob = Pick<
   Job,
-  "url" | "title" | "thumb" | "mode" | "playlist" | "dir" | "quality" | "items" | "selected"
+  "url" | "title" | "thumb" | "mode" | "playlist" | "dir" | "quality" | "items" | "selected" | "subs" | "subLang"
 >;
 
 function apply(job: Job, ev: DlEvent): Job {
@@ -233,6 +236,8 @@ export function useDownloads() {
           playlist: n.playlist,
           items: n.items,
           count: n.selected,
+          subs: n.subs,
+          subLang: n.subLang,
         },
       });
     } catch (e) {

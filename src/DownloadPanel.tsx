@@ -4,6 +4,7 @@ import { downloadDir } from "@tauri-apps/api/path";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { Icon, icons } from "./Icon";
 import { parsePlaylistId, parseVideoId, thumbUrl } from "./youtube";
+import { langName } from "./captions";
 import {
   DownloaderStatus,
   Downloads,
@@ -35,7 +36,16 @@ const QUALITIES: { label: string; value: number | null }[] = [
 ];
 
 const PREFS_KEY = "focustube.download";
-type Prefs = { dir?: string; mode?: Mode; quality?: number | null };
+type Prefs = {
+  dir?: string;
+  mode?: Mode;
+  quality?: number | null;
+  subs?: "off" | "file" | "embed";
+  subLang?: string;
+};
+
+// Common YouTube caption languages; the user's own language is added first.
+const SUB_LANGS = ["en", "ar", "fr", "es", "de", "it", "pt", "ru", "tr", "hi", "ja", "ko", "zh-Hans", "nl", "pl", "id"];
 
 function loadPrefs(): Prefs {
   try {
@@ -59,11 +69,17 @@ export default function DownloadPanel({
   initialUrl,
   downloads,
   onPlayFile,
+  defaultSubLang,
+  initialMode,
   onClose,
 }: {
   initialUrl: string;
+  /** Preselect video or audio (e.g. audio when coming from a song). */
+  initialMode?: Mode;
   downloads: Downloads;
   onPlayFile: (path: string) => void;
+  /** Caption language preference, used as the default subtitle language. */
+  defaultSubLang: string | null;
   onClose: () => void;
 }) {
   const [status, setStatus] = useState<DownloaderStatus | null>(null);
@@ -97,7 +113,13 @@ export default function DownloadPanel({
           ) : status.needsSetup ? (
             <SetupCard onDone={refreshStatus} />
           ) : (
-            <DownloadForm initialUrl={initialUrl} hasFfmpeg={status.ffmpeg} downloads={downloads} />
+            <DownloadForm
+              initialUrl={initialUrl}
+              hasFfmpeg={status.ffmpeg}
+              downloads={downloads}
+              defaultSubLang={defaultSubLang}
+              initialMode={initialMode}
+            />
           )}
 
           <JobList downloads={downloads} onPlayFile={onPlayFile} />
@@ -177,20 +199,27 @@ function DownloadForm({
   initialUrl,
   hasFfmpeg,
   downloads,
+  defaultSubLang,
+  initialMode,
 }: {
   initialUrl: string;
   hasFfmpeg: boolean;
   downloads: Downloads;
+  defaultSubLang: string | null;
+  initialMode?: Mode;
 }) {
   const prefs = useRef(loadPrefs()).current;
   const [url, setUrl] = useState(initialUrl);
   const [info, setInfo] = useState<InfoState>({ state: "idle" });
   const [scope, setScope] = useState<"video" | "playlist">("video");
-  const [mode, setMode] = useState<Mode>(hasFfmpeg ? (prefs.mode ?? "video") : "audio");
+  const [mode, setMode] = useState<Mode>(hasFfmpeg ? (initialMode ?? prefs.mode ?? "video") : "audio");
   const [quality, setQuality] = useState<number | null>(prefs.quality ?? null);
   const [dir, setDir] = useState(prefs.dir ?? "");
   const [justAdded, setJustAdded] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [subs, setSubs] = useState<"off" | "file" | "embed">(prefs.subs ?? "off");
+  const [subLang, setSubLang] = useState(prefs.subLang ?? defaultSubLang ?? "en");
+  const subLangs = [subLang, ...SUB_LANGS.filter((l) => l !== subLang)];
 
   const videoId = parseVideoId(url);
   const listId = parsePlaylistId(url);
@@ -297,6 +326,8 @@ function DownloadForm({
       quality: mode === "video" ? quality : null,
       items: isPlaylist && !all ? toRanges(positions) : null,
       selected: isPlaylist ? chosen.length : null,
+      subs: mode === "video" ? subs : "off",
+      subLang,
     });
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 1600);
@@ -415,6 +446,53 @@ function DownloadForm({
         <p className="dl-hint">
           Video downloads and MP3 need FFmpeg, which wasn’t found. Install it (e.g.{" "}
           <code>brew install ffmpeg</code>) and reopen FocusTube. Audio still works as M4A.
+        </p>
+      )}
+
+      {mode === "video" && (
+        <div className="dl-row">
+          <label className="dl-field grow">
+            <span className="dl-label">Subtitles</span>
+            <select
+              className="dl-select"
+              value={subs}
+              onChange={(e) => {
+                const v = e.target.value as typeof subs;
+                setSubs(v);
+                savePrefs({ subs: v });
+              }}
+            >
+              <option value="off">None</option>
+              <option value="file">{hasFfmpeg ? "Save as .srt file" : "Save as .vtt file"}</option>
+              <option value="embed" disabled={!hasFfmpeg}>
+                Inside the video
+              </option>
+            </select>
+          </label>
+          {subs !== "off" && (
+            <label className="dl-field">
+              <span className="dl-label">Language</span>
+              <select
+                className="dl-select"
+                value={subLang}
+                onChange={(e) => {
+                  setSubLang(e.target.value);
+                  savePrefs({ subLang: e.target.value });
+                }}
+              >
+                {subLangs.map((l) => (
+                  <option key={l} value={l}>
+                    {langName(l)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
+      )}
+      {mode === "video" && subs === "embed" && (
+        <p className="dl-hint">
+          Built-in subtitles show in players like VLC. To see them in FocusTube, choose “Save as file”.
         </p>
       )}
 
